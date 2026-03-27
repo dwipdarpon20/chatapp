@@ -81,3 +81,66 @@ export const signup = async (req, res) => {
         })
     }
 }
+
+export const login = async (req , res ) => {
+    try {
+        const { email , password} = req.body;
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide all the required fields"
+            });
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json ({
+                success : false ,
+                message : "Invalid email or password"
+            })
+        }
+        const isPasswordMatch = await bcrypt.compare (password , user.password);
+
+        if (!isPasswordMatch){
+            return res.status(400).json ({
+                success : false ,
+                message : "Invalid email or password"
+            })
+        }
+        generateToken (user._id , res);
+
+        return res.status(200).json ({
+            success : true,
+            message : "Logged in successfully",
+            user : {
+                _id : user._id,
+                fullName : user.fullName,
+                email : user.email,
+                profilePic : user.profilePic
+            }
+        })
+    } catch (error) {
+        return res.status(500).json ({
+            success : false ,
+            message : "Server error"
+        })
+    }
+}
+
+export const logout = async (req , res)=> {
+    try {
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+        return res.status(200).json ({
+            success : true ,
+            message : "Logged out successfully"
+        })
+    } catch (error) {
+        return res.status(500).json ({
+            success : false ,
+            message : "Server error"
+        })
+    }
+}
