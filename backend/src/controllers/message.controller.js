@@ -38,6 +38,10 @@ export const sendMesssages = async (req, res)=> {
     const recieverId = req.params.id;
     const { text, image } = req.body;
 
+    if (!text && !image) {
+      return res.status(400).json({ error: 'Message must contain text or image' });
+    }
+
     let imageUrl = null;
     if (image){
       const uploadResponse = await cloudinary.uploader.upload(image);

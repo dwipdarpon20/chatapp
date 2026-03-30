@@ -3,12 +3,12 @@ import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
 
 
 const aj = arcjet({
-  
+
   key: ENV.ARCJET_KEY,
   rules: [
     shield({ mode: "LIVE" }),
     detectBot({
-      mode: "LIVE", 
+      mode: "LIVE",
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
         // Uncomment to allow these other common bot categories
@@ -19,11 +19,9 @@ const aj = arcjet({
     }),
     // Create a token bucket rate limit. Other algorithms are supported.
     slidingWindow({
-        mode: "LIVE",
-        max: 100,
-        interval: 60 * 1000, // 1 minute
-        // Optionally customize the cache key. By default, it's the IP address.
-        // key: (req) => req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      mode: "LIVE",
+      max: 1000, // dev ke liye high rakho
+      interval: 60 * 1000,
     })
   ],
 });
