@@ -20,7 +20,7 @@ const aj = arcjet({
     // Create a token bucket rate limit. Other algorithms are supported.
     slidingWindow({
       mode: "LIVE",
-      max: 1000, // dev ke liye high rakho
+      max: 100000, // dev ke liye high rakho
       interval: 60 * 1000,
     })
   ],

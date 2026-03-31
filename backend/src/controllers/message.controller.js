@@ -35,7 +35,7 @@ export const sendMesssages = async (req, res)=> {
   try {
      console.log("USER:", req.user._id); // debug
     const senderId = req.user._id;
-    const recieverId = req.params.id;
+    const receiverId = req.params.id;
     const { text, image } = req.body;
 
     if (!text && !image) {
@@ -50,7 +50,7 @@ export const sendMesssages = async (req, res)=> {
 
     const message = new Message({
       senderId,
-      receiverId : recieverId,
+      receiverId,
       text,
       image : imageUrl
     })
