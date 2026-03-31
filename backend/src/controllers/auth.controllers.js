@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from '../libs/utils.js';
 import { sendWelcomeEmail } from '../emails/emailHandllers.js';
 import dotenv from 'dotenv';
+import cloudinary from '../libs/cloudinary.js';
 
 dotenv.config();
 
@@ -82,9 +83,9 @@ export const signup = async (req, res) => {
     }
 }
 
-export const login = async (req , res ) => {
+export const login = async (req, res) => {
     try {
-        const { email , password} = req.body;
+        const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -93,58 +94,89 @@ export const login = async (req , res ) => {
         }
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json ({
-                success : false ,
-                message : "Invalid email or password"
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
             })
         }
-        const isPasswordMatch = await bcrypt.compare (password , user.password);
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-        if (!isPasswordMatch){
-            return res.status(400).json ({
-                success : false ,
-                message : "Invalid email or password"
+        if (!isPasswordMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
             })
         }
-        generateToken (user._id , res);
+        generateToken(user._id, res);
 
-        return res.status(200).json ({
-            success : true,
-            message : "Logged in successfully",
-            user : {
-                _id : user._id,
-                fullName : user.fullName,
-                email : user.email,
-                profilePic : user.profilePic
+        return res.status(200).json({
+            success: true,
+            message: "Logged in successfully",
+            user: {
+                _id: user._id,
+                fullName: user.fullName,
+                email: user.email,
+                profilePic: user.profilePic
             }
         })
     } catch (error) {
-        return res.status(500).json ({
-            success : false ,
-            message : "Server error"
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
         })
     }
 }
 
-export const logout = async (req , res)=> {
+export const logout = async (req, res) => {
     try {
         res.clearCookie('jwt', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict'
         });
-        return res.status(200).json ({
-            success : true ,
-            message : "Logged out successfully"
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully"
         })
     } catch (error) {
-        return res.status(500).json ({
-            success : false ,
-            message : "Server error"
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
         })
     }
 }
 
-export const updateProfile = async (req , res )=>{
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { profilePic } = req.body;
+        if (!profilePic) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile picture is required"
+            });
+        }
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+            folder: "profile_pics",
+            resource_type: "image"
+        });
+        const updatedUser = await User.findByIdAndUpdate({
+            _id: userId
+        }, {
+            profilePic: uploadResponse.secure_url
+        }, { returnDocument: "after" }).select("-password");
 
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error("Profile update error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        })
+    }
 }

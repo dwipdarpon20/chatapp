@@ -35,7 +35,7 @@ export const useChatStore = create ((set, get)=>({
         set({isUserLoading : true});
         try {
             const response = await axiosInstance.get('/messages/chats');
-            set({chats : response.data.chats, isUserLoading : false});
+            set({chats : response.data.chatPartners, isUserLoading : false});
         } catch (error) {
             toast.error("Failed to load chats");
             set({isUserLoading : false});
