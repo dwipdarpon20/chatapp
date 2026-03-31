@@ -77,7 +77,7 @@ export const getChatsPartners = async (req , res) => {
       _id : { $in : chatPartnersIds}
     }).select('-password');
 
-    res.status(200).json({ chatPartners });
+    return res.status(200).json({ chatPartners });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
