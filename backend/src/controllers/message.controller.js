@@ -25,7 +25,7 @@ export const getMessagesByUserId = async (req, res) => {
         { senderId : otherUserId , receiverId : myId}
       ],
     });
-    res.status(200).json ({messages});
+     return res.status(200).json ({messages});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
