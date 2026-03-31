@@ -20,8 +20,10 @@ const ContactList = () => {
         >
           <div className="flex items-center gap-3">
             <div>
-              <div className="size-12 rounded-full">
-                <img src={contact.profilePic || "/avatar.png"} />
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <img src={contact.profilePic || "/avatar.png"} 
+                className="w-full h-full object-cover"
+                />
               </div>
             </div>
             <h4 className="text-slate-200 font-medium">{contact.fullName}</h4>
