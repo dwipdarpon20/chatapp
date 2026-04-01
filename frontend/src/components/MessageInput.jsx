@@ -1,5 +1,5 @@
 import { useState , useRef } from 'react'
-import useKeyboardSound from '../hooks/useKeyboardSound'
+import useKeyboardSound from '../hooks/useKeyBoardSound.js'
 import { useChatStore } from '../store/useChatStore';
 import toast from 'react-hot-toast';
 import { SendIcon , ImageIcon , XIcon } from 'lucide-react';
