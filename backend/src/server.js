@@ -6,10 +6,11 @@ import authRoutes from './routes/auth.route.js';
 import messagesRoutes from './routes/messages.routes.js';
 import connectDb from './db/connectDb.js';
 import cors from 'cors';
+import {app , server} from './libs/socket.js';
 
 dotenv.config();
 
-const app = express();
+
 
 
 
@@ -35,7 +36,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
+  server.listen(PORT, () => {
   console.log('Server is running on port ' + PORT);
   connectDb();
 });

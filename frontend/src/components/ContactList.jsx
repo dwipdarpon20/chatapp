@@ -1,14 +1,17 @@
-import { useEffect } from 'react';
-import  { useChatStore } from '../store/useChatStore'
-import UserLoadingSkeleton from './UsersLoadingSkeleton';
+import { useEffect } from "react";
+import { useChatStore } from "../store/useChatStore";
+import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
+import { useAuthStore } from "../store/useAuthStore";
 
-const ContactList = () => {
-  const { allContacts, getAllContacts , setSelectedUser , isUserLoading  } = useChatStore();
+function ContactList() {
+  const { getAllContacts, allContacts, setSelectedUser, isUsersLoading } = useChatStore();
+  const { onlineUsers } = useAuthStore();
+
   useEffect(() => {
     getAllContacts();
   }, [getAllContacts]);
 
-  if (isUserLoading) return <UserLoadingSkeleton />;
+  if (isUsersLoading) return <UsersLoadingSkeleton />;
 
   return (
     <>
@@ -19,11 +22,9 @@ const ContactList = () => {
           onClick={() => setSelectedUser(contact)}
         >
           <div className="flex items-center gap-3">
-            <div>
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                <img src={contact.profilePic || "/avatar.png"} 
-                className="w-full h-full object-cover"
-                />
+            <div className={`avatar ${onlineUsers.includes(contact._id) ? "online" : ""}`}>
+              <div className="size-12 rounded-full">
+                <img src={contact.profilePic || "/avatar.png"} />
               </div>
             </div>
             <h4 className="text-slate-200 font-medium">{contact.fullName}</h4>
@@ -31,7 +32,6 @@ const ContactList = () => {
         </div>
       ))}
     </>
-  )
+  );
 }
-
-export default ContactList
+export default ContactList;
