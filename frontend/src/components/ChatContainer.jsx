@@ -5,15 +5,29 @@ import ChatHeader from './ChatHeader';
 import NochatHistoryPlaceholder from './NoChatHistory';
 import MessageInput from './MessageInput';
 import MessageLoadingSkeleton from './MessageLoading';
+import { use } from 'react';
 
 const ChatContainer = () => {
-  const { selectedUser, messages, isMessagesLoading , getMessagesByUserId } = useChatStore();
+  const { 
+     selectedUser,
+     messages, 
+     isMessagesLoading , 
+     getMessagesByUserId ,
+     subscribeToMessages ,
+     unsubscribeFromMessages
+  } = useChatStore();
+
+
   const {authUser} = useAuthStore();
   useEffect(() => {
     if (selectedUser) {
       getMessagesByUserId(selectedUser._id);
+      subscribeToMessages();
     }
-  }, [selectedUser, getMessagesByUserId]);
+    return () => {
+      unsubscribeFromMessages();
+    };
+  }, [selectedUser, getMessagesByUserId , subscribeToMessages, unsubscribeFromMessages]);
 
   const messagesEndRef = useRef(null);
 
