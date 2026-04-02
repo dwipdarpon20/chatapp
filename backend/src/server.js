@@ -10,10 +10,6 @@ import {app , server} from './libs/socket.js';
 
 dotenv.config();
 
-
-
-
-
 const __dirname = path.resolve();
 
 const PORT = process.env.PORT || 3000;
